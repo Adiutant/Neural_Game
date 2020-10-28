@@ -156,8 +156,8 @@ class NeuralNetwork {
         var l1_error:INDArray? = l2_delta.mmul(syn1T)
         var l1_delta:INDArray? =null
         l1_delta = nonlin(this.resultl1!!,true).mul(l1_error)
-        this.syn1 = this.syn1?.add(this.resultl1?.transpose()?.mmul(l2_delta.mul(2)))
-        this.syn0 = this.syn0?.add(this.resultl0?.transpose()?.mmul(l1_delta.mul(2)))
+        this.syn1 = this.syn1?.add(this.resultl1?.transpose()?.mmul(l2_delta.mul(3)))
+        this.syn0 = this.syn0?.add(this.resultl0?.transpose()?.mmul(l1_delta))
     }
 
 //        if (this.resultl3 != null) {
