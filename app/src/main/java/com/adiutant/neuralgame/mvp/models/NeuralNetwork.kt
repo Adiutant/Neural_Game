@@ -156,8 +156,8 @@ class NeuralNetwork {
         var l1_error:INDArray? = l2_delta.mmul(syn1T)
         var l1_delta:INDArray? =null
         l1_delta = nonlin(this.resultl1!!,true).mul(l1_error)
-        this.syn1 = this.syn1?.add(this.resultl1?.transpose()?.mmul(l2_delta))
-        this.syn0 = this.syn0?.add(this.resultl0?.transpose()?.mmul(l1_delta))
+        this.syn1 = this.syn1?.add(this.resultl1?.transpose()?.mmul(l2_delta.mul(2)))
+        this.syn0 = this.syn0?.add(this.resultl0?.transpose()?.mmul(l1_delta.mul(2)))
     }
 
 //        if (this.resultl3 != null) {
@@ -264,6 +264,22 @@ class NeuralNetwork {
     {
         this.syn0 = rand(Nd4j.create(9,12),0)
         this.syn1 = rand(Nd4j.create(12,3),0)
+        var rows = this.syn0!!.rows()
+        var columns = this.syn0!!.columns()
+        for (i in 0 until rows)
+        {
+            for (j in 0 until columns) {
+               this.syn0 =  this.syn0!!.putScalar(i.toLong(), j.toLong(),(-1..1).random().toDouble())
+            }
+        }
+         rows = this.syn1!!.rows()
+         columns = this.syn1!!.columns()
+        for (i in 0 until rows)
+        {
+            for (j in 0 until columns) {
+                this.syn1 =  this.syn1!!.putScalar(i.toLong(), j.toLong(),(-1..1).random().toDouble())
+            }
+        }
 
 
        // println(this.syn0)
