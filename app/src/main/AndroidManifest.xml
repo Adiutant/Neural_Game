@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.adiutant.neuralgame">
 
     <application
@@ -9,7 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name="com.orm.SugarApp">
+        tools:ignore="ExtraText">
+        #android:name="com.orm.SugarApp">
         <meta-data android:name="DATABASE" android:value="neural.db"/>
         <meta-data android:name="VERSION" android:value="1"/>
         <meta-data android:name="QUERY_LOG" android:value="true"/>

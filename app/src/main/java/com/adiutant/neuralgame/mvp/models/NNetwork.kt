@@ -1,8 +1,8 @@
 package com.adiutant.neuralgame.mvp.models
 
-import com.orm.SugarRecord
 
-class NNetwork: SugarRecord {
+
+class NNetwork {
     var syn0:String? = null
     var syn1:String? = null
     var syn2:String? = null
