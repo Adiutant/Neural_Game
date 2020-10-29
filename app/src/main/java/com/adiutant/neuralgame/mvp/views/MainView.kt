@@ -6,6 +6,7 @@ import com.adiutant.neuralgame.mvp.models.NeuralNetwork
 interface MainView {
     fun onGameLoaded(neural: NeuralNetwork)
     fun onPredictionShowed()
+    fun onPlayerTurn(turn:Float)
    // fun updateView()
 
     //fun onSearchResult(notes: List<Notes>)

@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity(), MainView{
     private lateinit var userTurnView:ImageView
     private lateinit var neuralTurnView:ImageView
     private var turn = 0L
-    private var history:INDArray = Nd4j.create(floatArrayOf(0f,0f,0f,0f,0f,0f,0f,0f,0f), intArrayOf(1,9))
+    private var history:INDArray = Nd4j.create(floatArrayOf(0f,0f,0f,0f,0f,0f,0f,0f), intArrayOf(1,8))
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -33,40 +33,70 @@ class MainActivity : AppCompatActivity(), MainView{
         //mPresenter = MainPresenter()
         neural = NeuralNetwork()
         onGameLoaded(neural)
-        cross.setOnClickListener { history.putScalar(turn,0f)
-
-            turn++
-            onPredictionShowed()
+        cross.setOnClickListener {
             neural.fit(history, Nd4j.create(floatArrayOf(1f, 0f, 0f)))
-            neural.predict(history)
-            if (turn==6L)
-            {
-                turn =0L
-            }
-        }
-        rock.setOnClickListener { history.putScalar(turn,1f)
-
-            turn++
+            onPlayerTurn(0f)
             onPredictionShowed()
-            neural.fit(history, Nd4j.create(floatArrayOf(0f, 1f, 0f)))
             neural.predict(history)
-            if (turn==6L)
+            if (turn==history.columns().toLong())
             {
-                turn =0L
-            }
-        }
-        paper.setOnClickListener { history.putScalar(turn,2f)
+                for (i in 1 until history.columns())
+                {
+                    var temp = history.getFloat(1,i)
+                    history.putScalar(i.toLong()-1,temp)
 
-            turn++
+
+                }
+                history.putScalar(history.columns().toLong()-1,0f)
+            }
+            else
+            {
+                history.putScalar(turn,0f)
+                turn++
+            }
+
+        }
+        rock.setOnClickListener {  neural.fit(history, Nd4j.create(floatArrayOf(0f, 1f, 0f)))
+            onPlayerTurn(1f)
             onPredictionShowed()
+            neural.predict(history)
+            if (turn==history.columns().toLong())
+            {
+                for (i in 1 until history.columns())
+                {
+                    var temp = history.getFloat(1,i)
+                    history.putScalar(i.toLong()-1,temp)
+
+
+                }
+                history.putScalar(history.columns().toLong()-1,1f)
+            }
+            else
+            {
+                history.putScalar(turn,1f)
+                turn++
+            }
+
+        }
+        paper.setOnClickListener {
             neural.fit(history, Nd4j.create(floatArrayOf(0f, 0f, 1f)))
+            onPlayerTurn(2f)
+            onPredictionShowed()
             neural.predict(history)
-            if (turn==6L)
-            {
-                turn =0L
-            }
-        }
+            if (turn == history.columns().toLong()) {
+                for (i in 1 until history.columns()) {
+                    var temp = history.getFloat(1, i)
+                    history.putScalar(i.toLong()-1,temp)
 
+
+                }
+                history.putScalar(history.columns().toLong()-1,2f)
+            } else {
+                history.putScalar(turn, 2f)
+                turn++
+            }
+
+        }
 
     }
 
@@ -76,6 +106,7 @@ class MainActivity : AppCompatActivity(), MainView{
     }
 
     override fun onPredictionShowed() {
+        println(history)
         var max:Float = 0f
         var index:Long = 0L
         for (i in 0L until (3L))
@@ -93,5 +124,23 @@ class MainActivity : AppCompatActivity(), MainView{
         if (index == 2L){neuralTurnView.setImageResource(R.drawable.cross)
             neuralTurnView.visibility = View.VISIBLE}
 
+    }
+
+    override fun onPlayerTurn(turn: Float) {
+        if (turn==0f)
+        {
+            userTurnView.visibility = View.VISIBLE
+            userTurnView.setImageResource(R.drawable.cross)
+        }
+        if (turn==1f)
+        {
+            userTurnView.visibility = View.VISIBLE
+            userTurnView.setImageResource(R.drawable.rock)
+        }
+        if (turn==2f)
+        {
+            userTurnView.visibility = View.VISIBLE
+            userTurnView.setImageResource(R.drawable.paper)
+        }
     }
 }
