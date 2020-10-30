@@ -13,10 +13,11 @@ import kotlin.math.exp
 class NeuralNetwork {
     var syn0: INDArray? = null
     var syn1: INDArray? = null
-
+    var syn2:INDArray? = null
     var history: INDArray? = null
     var resultl1: INDArray? = null
     var resultl2: INDArray? = null
+    var resultl3:INDArray? = null
     var resultl0: INDArray? = null
 
 //    constructor(
@@ -63,7 +64,11 @@ class NeuralNetwork {
         l1 = l1.mmul(this.syn1)
         l2 = nonlin(l1,false)
         this.resultl2 = l2
-        println(l2)
+        var l3:INDArray? = null
+        l2 = l2.mmul(this.syn2)
+        l3  = nonlin(l2,false)
+        this.resultl3 = l3
+        println(l3)
 
 
 //        println(this.syn0?.get(0)?.get(0))
@@ -148,14 +153,19 @@ class NeuralNetwork {
     }
 
     fun fit(x: INDArray, y: INDArray) {
-        var l2_error: INDArray?= null
-        l2_error = y.reshape(1,3).subi(this.resultl2).mul(2)
+        var l3_error:INDArray? = null
+        l3_error = y.reshape(1,3).subi(this.resultl3).mul(2)
+        var l3_delta:INDArray? = l3_error
+        l3_delta = nonlin(this.resultl3!!,true).mul(l3_error)
+        val syn2T = this.syn2?.transpose()
+        var l2_error: INDArray?= l3_delta.mmul(syn2T)
         var l2_delta:INDArray? = l2_error
         l2_delta = nonlin(this.resultl2!!,true).mul(l2_error)
         val syn1T = this.syn1?.transpose()
         var l1_error:INDArray? = l2_delta.mmul(syn1T)
         var l1_delta:INDArray? =null
         l1_delta = nonlin(this.resultl1!!,true).mul(l1_error)
+        this.syn2 = this.syn2?.add(this.resultl2?.transpose()?.mmul(l3_delta))
         this.syn1 = this.syn1?.add(this.resultl1?.transpose()?.mmul(l2_delta))
         this.syn0 = this.syn0?.add(this.resultl0?.transpose()?.mmul(l1_delta))
     }
@@ -262,8 +272,9 @@ class NeuralNetwork {
 
     fun initWeights()
     {
-        this.syn0 = rand(Nd4j.create(8,24),0)
-        this.syn1 = rand(Nd4j.create(24,3),0)
+        this.syn0 = rand(Nd4j.create(10,12),0)
+        this.syn1 = rand(Nd4j.create(12,24),0)
+        this.syn2 = rand(Nd4j.create(24,3),0)
         var rows = this.syn0!!.rows()
         var columns = this.syn0!!.columns()
         for (i in 0 until rows)
@@ -278,6 +289,14 @@ class NeuralNetwork {
         {
             for (j in 0 until columns) {
                 this.syn1 =  this.syn1!!.putScalar(i.toLong(), j.toLong(),(-1..1).random().toDouble())
+            }
+        }
+        rows = this.syn2!!.rows()
+        columns = this.syn2!!.columns()
+        for (i in 0 until rows)
+        {
+            for (j in 0 until columns) {
+                this.syn2 =  this.syn2!!.putScalar(i.toLong(), j.toLong(),(-1..1).random().toDouble())
             }
         }
 

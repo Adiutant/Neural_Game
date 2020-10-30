@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity(), MainView{
     private var uScore=0
     private lateinit var score:TextView
     private var turn = 0L
-    private var history:INDArray = Nd4j.create(floatArrayOf(0f,0f,0f,0f,0f,0f,0f,0f), intArrayOf(1,8))
+    private var history:INDArray = Nd4j.create(floatArrayOf(0f,1f,0f,2f,1f,1f,0f,2f,0f,1f), intArrayOf(1,10))
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -117,9 +117,9 @@ class MainActivity : AppCompatActivity(), MainView{
         var index:Long = 0L
         for (i in 0L until (3L))
         {
-            if (neural.resultl2?.getFloat(i)!! >max)
+            if (neural.resultl3?.getFloat(i)!! >max)
             {
-                max = neural.resultl2?.getFloat(i)!!
+                max = neural.resultl3?.getFloat(i)!!
                 index= i
             }
         }
@@ -137,9 +137,9 @@ class MainActivity : AppCompatActivity(), MainView{
         var index:Long = 0L
         for (i in 0L until (3L))
         {
-            if (neural.resultl2?.getFloat(i)!! >max)
+            if (neural.resultl3?.getFloat(i)!! >max)
             {
-                max = neural.resultl2?.getFloat(i)!!
+                max = neural.resultl3?.getFloat(i)!!
                 index= i
             }
         }
