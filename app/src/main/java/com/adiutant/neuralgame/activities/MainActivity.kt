@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
 import com.adiutant.neuralgame.R
 import com.adiutant.neuralgame.mvp.models.NeuralNetwork
 import com.adiutant.neuralgame.mvp.presenters.MainPresenter
@@ -20,6 +21,9 @@ class MainActivity : AppCompatActivity(), MainView{
     private lateinit var paper:ImageButton
     private lateinit var userTurnView:ImageView
     private lateinit var neuralTurnView:ImageView
+    private var nScore= 0
+    private var uScore=0
+    private lateinit var score:TextView
     private var turn = 0L
     private var history:INDArray = Nd4j.create(floatArrayOf(0f,0f,0f,0f,0f,0f,0f,0f), intArrayOf(1,8))
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,16 +32,17 @@ class MainActivity : AppCompatActivity(), MainView{
         cross= findViewById(R.id.cross_button)
         rock= findViewById(R.id.rock_button)
         paper= findViewById(R.id.paper_button)
+        score = findViewById(R.id.score)
         userTurnView = findViewById(R.id.userTurnView)
         neuralTurnView = findViewById(R.id.neuralTurnView)
         //mPresenter = MainPresenter()
         neural = NeuralNetwork()
         onGameLoaded(neural)
         cross.setOnClickListener {
-            neural.fit(history, Nd4j.create(floatArrayOf(1f, 0f, 0f)))
+            neural.predict(history)
             onPlayerTurn(0f)
             onPredictionShowed()
-            neural.predict(history)
+            neural.fit(history, Nd4j.create(floatArrayOf(1f, 0f, 0f)))
             if (turn==history.columns().toLong())
             {
                 for (i in 1 until history.columns())
@@ -56,10 +61,11 @@ class MainActivity : AppCompatActivity(), MainView{
             }
 
         }
-        rock.setOnClickListener {  neural.fit(history, Nd4j.create(floatArrayOf(0f, 1f, 0f)))
+        rock.setOnClickListener {
+            neural.predict(history)
             onPlayerTurn(1f)
             onPredictionShowed()
-            neural.predict(history)
+            neural.fit(history, Nd4j.create(floatArrayOf(0f, 1f, 0f)))
             if (turn==history.columns().toLong())
             {
                 for (i in 1 until history.columns())
@@ -79,10 +85,10 @@ class MainActivity : AppCompatActivity(), MainView{
 
         }
         paper.setOnClickListener {
-            neural.fit(history, Nd4j.create(floatArrayOf(0f, 0f, 1f)))
+            neural.predict(history)
             onPlayerTurn(2f)
             onPredictionShowed()
-            neural.predict(history)
+            neural.fit(history, Nd4j.create(floatArrayOf(0f, 0f, 1f)))
             if (turn == history.columns().toLong()) {
                 for (i in 1 until history.columns()) {
                     var temp = history.getFloat(1, i)
@@ -127,6 +133,24 @@ class MainActivity : AppCompatActivity(), MainView{
     }
 
     override fun onPlayerTurn(turn: Float) {
+        var max:Float = 0f
+        var index:Long = 0L
+        for (i in 0L until (3L))
+        {
+            if (neural.resultl2?.getFloat(i)!! >max)
+            {
+                max = neural.resultl2?.getFloat(i)!!
+                index= i
+            }
+        }
+        if ((index!=0L&&turn!=1f)&&(index!=1L&&turn!=2f)&&(index!=2L&&turn!=0f)) {
+            if (index == turn.toLong()) {
+                nScore++
+            } else {
+                uScore++
+            }
+            score.text = "$uScore-$nScore"
+        }
         if (turn==0f)
         {
             userTurnView.visibility = View.VISIBLE
