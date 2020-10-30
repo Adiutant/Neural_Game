@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity(), MainView{
                 index= i
             }
         }
-        if ((index!=0L&&turn!=1f)&&(index!=1L&&turn!=2f)&&(index!=2L&&turn!=0f)) {
+        if ((index!=0L||turn!=1f)&&(index!=1L||turn!=2f)&&(index!=2L||turn!=0f)) {
             if (index == turn.toLong()) {
                 nScore++
             } else {
