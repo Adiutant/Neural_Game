@@ -154,7 +154,7 @@ class NeuralNetwork {
 
     fun fit(x: INDArray, y: INDArray) {
         var l3_error:INDArray? = null
-        l3_error = y.reshape(1,3).subi(this.resultl3).mul(2)
+        l3_error = y.reshape(1,3).subi(this.resultl3)
         var l3_delta:INDArray? = l3_error
         l3_delta = nonlin(this.resultl3!!,true).mul(l3_error)
         val syn2T = this.syn2?.transpose()
@@ -272,7 +272,7 @@ class NeuralNetwork {
 
     fun initWeights()
     {
-        this.syn0 = rand(Nd4j.create(10,12),0)
+        this.syn0 = rand(Nd4j.create(6,12),0)
         this.syn1 = rand(Nd4j.create(12,24),0)
         this.syn2 = rand(Nd4j.create(24,3),0)
         var rows = this.syn0!!.rows()

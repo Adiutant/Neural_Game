@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity(), MainView{
     private var uScore=0
     private lateinit var score:TextView
     private var turn = 0L
-    private var history:INDArray = Nd4j.create(floatArrayOf(0f,1f,0f,2f,1f,1f,0f,2f,0f,1f), intArrayOf(1,10))
+    private var history:INDArray = Nd4j.create(floatArrayOf(0f,1f,0f,2f,1f,1f), intArrayOf(1,6))
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -149,7 +149,11 @@ class MainActivity : AppCompatActivity(), MainView{
             } else {
                 uScore++
             }
-            score.text = "$uScore-$nScore"
+            if (uScore!=0||nScore!=0) {
+                var percentage = (Math.round(nScore.toFloat() / (uScore.toFloat() + nScore.toFloat()) * 100.0) / 100.0)*100
+                if (percentage>100)percentage = 100.0
+                score.text = """$uScore-$nScore:${percentage.toInt()}%"""
+            }
         }
         if (turn==0f)
         {
